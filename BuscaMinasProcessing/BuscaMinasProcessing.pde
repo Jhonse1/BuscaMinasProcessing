@@ -1,117 +1,117 @@
-int cols, rows;
+int cols, filas;
 int w = 40; 
-int totalMines;
-Casilla[][] grid;
-boolean gameOver;
-boolean gameWon;
-int flaggedMines;
-boolean showMenu = true;
-String currentDifficulty = "medio";
-int menuHeight = 40; 
-int topMenuHeight = 40; 
+int totalMinas;
+Casilla[][] cuadricula;
+boolean juegoTerminado;
+boolean juegoGanado;
+int minasMarcadas;
+boolean mostrarMenu = true;
+String dificultadActual = "medio";
+int alturaMenu = 40; 
+int alturaMenuSuperior = 40; 
 
-int startTime; 
-int endTime;   
-int elapsedTime; 
+int tiempoInicio; 
+int tiempoFin;   
+int tiempoTranscurrido; 
 
 void setup() {
   size(1000, 1200); 
 }
 
 void iniciarJuego(String dificultad) {
-  showMenu = false;
+  mostrarMenu = false;
   if (dificultad.equals("fácil")) {
     cols = 10;
-    rows = 10;
-    totalMines = 10;
+    filas = 10;
+    totalMinas = 10;
   } else if (dificultad.equals("medio")) {
     cols = 20;
-    rows = 20;
-    totalMines = 40;
+    filas = 20;
+    totalMinas = 40;
   } else if (dificultad.equals("difícil")) {
     cols = 21;
-    rows = 21;
-    totalMines = 99;
+    filas = 21;
+    totalMinas = 99;
   }
 
-  grid = new Casilla[cols][rows];
+  cuadricula = new Casilla[cols][filas];
   for (int i = 0; i < cols; i++) {
-    for (int j = 0; j < rows; j++) {
-      grid[i][j] = new Casilla(i, j, w);
+    for (int j = 0; j < filas; j++) {
+      cuadricula[i][j] = new Casilla(i, j, w);
     }
   }
 
-  int minesPlaced = 0;
-  while (minesPlaced < totalMines) {
+  int minasColocadas = 0;
+  while (minasColocadas < totalMinas) {
     int i = int(random(cols));
-    int j = int(random(rows));
-    if (!grid[i][j].isMine) {
-      grid[i][j].isMine = true;
-      minesPlaced++;
+    int j = int(random(filas));
+    if (!cuadricula[i][j].esMina) {
+      cuadricula[i][j].esMina = true;
+      minasColocadas++;
     }
   }
 
   for (int i = 0; i < cols; i++) {
-    for (int j = 0; j < rows; j++) {
-      grid[i][j].countMines();
+    for (int j = 0; j < filas; j++) {
+      cuadricula[i][j].contarMinas();
     }
   }
 
-  gameOver = false;
-  gameWon = false;
-  flaggedMines = 0;
-  startTime = millis(); 
+  juegoTerminado = false;
+  juegoGanado = false;
+  minasMarcadas = 0;
+  tiempoInicio = millis(); 
   loop();
 }
 
 void draw() {
   background(255);
 
-  if (showMenu) {
-    showDifficultyMenu();
+  if (mostrarMenu) {
+    mostrarMenuDificultad();
   } else {
-    int tableroAltura = rows * w;
-    int tableroAnchura = cols * w;
+    int alturaTablero = filas * w;
+    int anchuraTablero = cols * w;
 
-    translate((width - tableroAnchura) / 2, (height - tableroAltura - menuHeight - topMenuHeight) / 2 + topMenuHeight);
+    translate((width - anchuraTablero) / 2, (height - alturaTablero - alturaMenu - alturaMenuSuperior) / 2 + alturaMenuSuperior);
 
     for (int i = 0; i < cols; i++) {
-      for (int j = 0; j < rows; j++) {
-        grid[i][j].show();
+      for (int j = 0; j < filas; j++) {
+        cuadricula[i][j].mostrar();
       }
     }
 
     fill(0);
     textSize(24);
     textAlign(CENTER);
-    text("Dificultad: " + currentDifficulty.toUpperCase(), width / 4, topMenuHeight - 70);
+    text("Dificultad: " + dificultadActual.toUpperCase(), width / 4, alturaMenuSuperior - 70);
 
-    if (!gameOver && !gameWon) {
-      elapsedTime = millis() - startTime;
+    if (!juegoTerminado && !juegoGanado) {
+      tiempoTranscurrido = millis() - tiempoInicio;
     }
     
-    int seconds = (elapsedTime / 1000) % 60;
-    int minutes = (elapsedTime / (1000 * 60)) % 60;
+    int segundos = (tiempoTranscurrido / 1000) % 60;
+    int minutos = (tiempoTranscurrido / (1000 * 60)) % 60;
     
-    text("Tiempo: " + nf(minutes, 2) + ":" + nf(seconds, 2), width / 5 * 3, topMenuHeight - 70);
+    text("Tiempo: " + nf(minutos, 2) + ":" + nf(segundos, 2), width / 5 * 3, alturaMenuSuperior - 70);
 
-    if (gameOver) {
+    if (juegoTerminado) {
       fill(0);
       textSize(32);
       textAlign(CENTER);
-      text("Juego Terminado", width / 2, (height - menuHeight) / 2);
+      text("Juego Terminado", width / 2, (height - alturaMenu) / 2);
       noLoop();
-    } else if (gameWon) {
+    } else if (juegoGanado) {
       fill(0);
       textSize(32);
       textAlign(CENTER);
-      text("¡Ganaste!", width / 2, (height - menuHeight) / 2);
+      text("¡Ganaste!", width / 2, (height - alturaMenu) / 2);
       noLoop();
     }
   }
 }
 
-void showDifficultyMenu() {
+void mostrarMenuDificultad() {
   fill(255);
   rect(0, 0, width, height);
   fill(0);
@@ -131,59 +131,59 @@ void showDifficultyMenu() {
 }
 
 void mousePressed() {
-  if (!showMenu && mouseY > topMenuHeight && mouseY < height - menuHeight) {
+  if (!mostrarMenu && mouseY > alturaMenuSuperior && mouseY < height - alturaMenu) {
     float offsetX = (width - cols * w) / 2;
-    float offsetY = (height - rows * w - menuHeight - topMenuHeight) / 2 + topMenuHeight;
+    float offsetY = (height - filas * w - alturaMenu - alturaMenuSuperior) / 2 + alturaMenuSuperior;
     for (int i = 0; i < cols; i++) {
-      for (int j = 0; j < rows; j++) {
-        if (grid[i][j].contains(mouseX - offsetX, mouseY - offsetY)) {
+      for (int j = 0; j < filas; j++) {
+        if (cuadricula[i][j].contiene(mouseX - offsetX, mouseY - offsetY)) {
           if (mouseButton == RIGHT) {
-            grid[i][j].flagged = !grid[i][j].flagged;
-            flaggedMines += grid[i][j].flagged ? 1 : -1;
+            cuadricula[i][j].marcada = !cuadricula[i][j].marcada;
+            minasMarcadas += cuadricula[i][j].marcada ? 1 : -1;
           } else if (mouseButton == LEFT) {
-            grid[i][j].reveal();
-            if (grid[i][j].isMine) {
-              gameOver = true;
-              endTime = millis(); 
+            cuadricula[i][j].descubrir();
+            if (cuadricula[i][j].esMina) {
+              juegoTerminado = true;
+              tiempoFin = millis(); 
             }
           }
         }
       }
     }
 
-    if (flaggedMines == totalMines && checkWin()) {
-      gameWon = true;
-      endTime = millis(); 
+    if (minasMarcadas == totalMinas && comprobarVictoria()) {
+      juegoGanado = true;
+      tiempoFin = millis(); 
     }
   }
 }
 
 void keyPressed() {
-  if (showMenu) {
+  if (mostrarMenu) {
     if (key == '1') {
-      currentDifficulty = "fácil";
-      iniciarJuego(currentDifficulty);
+      dificultadActual = "fácil";
+      iniciarJuego(dificultadActual);
     } else if (key == '2') {
-      currentDifficulty = "medio";
-      iniciarJuego(currentDifficulty);
+      dificultadActual = "medio";
+      iniciarJuego(dificultadActual);
     } else if (key == '3') {
-      currentDifficulty = "difícil";
-      iniciarJuego(currentDifficulty);
+      dificultadActual = "difícil";
+      iniciarJuego(dificultadActual);
     }
   } else {
     if (key == 'r') {
-      iniciarJuego(currentDifficulty);
+      iniciarJuego(dificultadActual);
     } else if (key == 'q') {
-      showMenu = true;
+      mostrarMenu = true;
       loop();
     }
   }
 }
 
-boolean checkWin() {
+boolean comprobarVictoria() {
   for (int i = 0; i < cols; i++) {
-    for (int j = 0; j < rows; j++) {
-      if ((grid[i][j].isMine && !grid[i][j].flagged) || (!grid[i][j].isMine && !grid[i][j].revealed)) {
+    for (int j = 0; j < filas; j++) {
+      if ((cuadricula[i][j].esMina && !cuadricula[i][j].marcada) || (!cuadricula[i][j].esMina && !cuadricula[i][j].descubierta)) {
         return false;
       }
     }
@@ -194,23 +194,23 @@ boolean checkWin() {
 class Casilla {
   int x, y;
   float w;
-  boolean isMine;
-  boolean revealed;
-  boolean flagged;
-  int neighboringMines;
+  boolean esMina;
+  boolean descubierta;
+  boolean marcada;
+  int minasVecinas;
 
   Casilla(int i, int j, float w) {
     this.x = i;
     this.y = j;
     this.w = w;
-    isMine = false;
-    revealed = false;
-    flagged = false;
+    esMina = false;
+    descubierta = false;
+    marcada = false;
   }
 
-  void countMines() {
-    if (isMine) {
-      neighboringMines = -1;
+  void contarMinas() {
+    if (esMina) {
+      minasVecinas = -1;
       return;
     }
     int total = 0;
@@ -218,26 +218,26 @@ class Casilla {
       for (int j = -1; j <= 1; j++) {
         int ni = x + i;
         int nj = y + j;
-        if (ni >= 0 && ni < cols && nj >= 0 && nj < rows) {
-          if (grid[ni][nj].isMine) {
+        if (ni >= 0 && ni < cols && nj >= 0 && nj < filas) {
+          if (cuadricula[ni][nj].esMina) {
             total++;
           }
         }
       }
     }
-    neighboringMines = total;
+    minasVecinas = total;
   }
 
-  void reveal() {
-    revealed = true;
-    if (neighboringMines == 0) {
+  void descubrir() {
+    descubierta = true;
+    if (minasVecinas == 0) {
       for (int i = -1; i <= 1; i++) {
         for (int j = -1; j <= 1; j++) {
           int ni = x + i;
           int nj = y + j;
-          if (ni >= 0 && ni < cols && nj >= 0 && nj < rows) {
-            if (!grid[ni][nj].revealed) {
-              grid[ni][nj].reveal();
+          if (ni >= 0 && ni < cols && nj >= 0 && nj < filas) {
+            if (!cuadricula[ni][nj].descubierta) {
+              cuadricula[ni][nj].descubrir();
             }
           }
         }
@@ -245,29 +245,29 @@ class Casilla {
     }
   }
 
-  boolean contains(float px, float py) {
+  boolean contiene(float px, float py) {
     return px > x * w && px < x * w + w && py > y * w && py < y * w + w;
   }
 
-  void show() {
+  void mostrar() {
     stroke(0);
     noFill();
     rect(x * w, y * w, w, w);
-    if (revealed) {
-      if (isMine) {
+    if (descubierta) {
+      if (esMina) {
         fill(127);
         ellipse(x * w + w * 0.5, y * w + w * 0.5, w * 0.5, w * 0.5);
       } else {
         fill(200);
         rect(x * w, y * w, w, w);
-        if (neighboringMines > 0) {
+        if (minasVecinas > 0) {
           fill(0);
           textAlign(CENTER);
           textSize(30);
-          text(neighboringMines, x * w + w * 0.5, y * w + w - 4);
+          text(minasVecinas, x * w + w * 0.5, y * w + w - 4);
         }
       }
-    } else if (flagged) {
+    } else if (marcada) {
       fill(255, 0, 0);
       rect(x * w, y * w, w, w);
     }
