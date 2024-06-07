@@ -10,6 +10,10 @@ String currentDifficulty = "medio";
 int menuHeight = 40; 
 int topMenuHeight = 40; 
 
+int startTime; 
+int endTime;   
+int elapsedTime; 
+
 void setup() {
   size(1000, 1200); 
 }
@@ -56,6 +60,7 @@ void iniciarJuego(String dificultad) {
   gameOver = false;
   gameWon = false;
   flaggedMines = 0;
+  startTime = millis(); 
   loop();
 }
 
@@ -76,12 +81,19 @@ void draw() {
       }
     }
 
-
-    // Muestra el menú superior centrado con la dificultad actual
     fill(0);
     textSize(24);
     textAlign(CENTER);
     text("Dificultad: " + currentDifficulty.toUpperCase(), width / 4, topMenuHeight - 70);
+
+    if (!gameOver && !gameWon) {
+      elapsedTime = millis() - startTime;
+    }
+    
+    int seconds = (elapsedTime / 1000) % 60;
+    int minutes = (elapsedTime / (1000 * 60)) % 60;
+    
+    text("Tiempo: " + nf(minutes, 2) + ":" + nf(seconds, 2), width / 5 * 3, topMenuHeight - 70);
 
     if (gameOver) {
       fill(0);
@@ -116,7 +128,6 @@ void showDifficultyMenu() {
   text("-Con q Vuelver al menu", width / 2, height / 2 + 220);
   text("-El numero descubierto indica la cantidad de bombas a su alrededor", width / 2, height / 2 + 240);
   text("Para empezar selecciona la dificultad y disfruta de el juego", width / 2, height / 2 + 300);
-  
 }
 
 void mousePressed() {
@@ -133,6 +144,7 @@ void mousePressed() {
             grid[i][j].reveal();
             if (grid[i][j].isMine) {
               gameOver = true;
+              endTime = millis(); 
             }
           }
         }
@@ -141,6 +153,7 @@ void mousePressed() {
 
     if (flaggedMines == totalMines && checkWin()) {
       gameWon = true;
+      endTime = millis(); 
     }
   }
 }
