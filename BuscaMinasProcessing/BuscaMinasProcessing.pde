@@ -1,5 +1,5 @@
 int cols, rows;
-int w = 40; // Tamaño de las casillas
+int w = 40; 
 int totalMines;
 Casilla[][] grid;
 boolean gameOver;
@@ -7,11 +7,11 @@ boolean gameWon;
 int flaggedMines;
 boolean showMenu = true;
 String currentDifficulty = "medio";
-int menuHeight = 40; // Altura del menú inferior
-int topMenuHeight = 40; // Altura del menú superior
+int menuHeight = 40; 
+int topMenuHeight = 40; 
 
 void setup() {
-  size(1000, 1200); // Tamaño de la ventana aumentado
+  size(1000, 1200); 
 }
 
 void iniciarJuego(String dificultad) {
