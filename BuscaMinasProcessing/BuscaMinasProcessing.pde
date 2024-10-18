@@ -294,3 +294,75 @@ class Casilla {
     }
   }
 }
+import random
+
+class NodoJugador:
+    def __init__(self, nombre):
+        self.nombre = nombre
+        self.siguiente = None
+        self.acumulado = None
+        
+class ListaCircular:
+    def __init__(self):
+        self.head = None
+        self.tail = None
+    
+    def agregar_jugador(self, nombre):
+        nuevo_jugador = NodoJugador(nombre)
+        if self.head is None:
+            self.head = nuevo_jugador
+            self.tail = nuevo_jugador
+            nuevo_jugador.siguiente = self.head  
+        else:
+            self.tail.siguiente = nuevo_jugador
+            self.tail = nuevo_jugador
+            self.tail.siguiente = self.head
+            
+    def Asignar_Cartas_Aleatorias(self):
+        return random.randint(1, 10), random.randint(1, 10)
+    
+    def jugar(self):
+        actual = self.head
+        turno = 0
+        while turno != 5:
+            print(f"El jugador usa la carta1 y la maquina la carta2")
+            carta1, carta2 = self.Asignar_Cartas_Aleatorias()()
+            print(f"{actual.nombre} Saca las cartas: {carta1} y {carta2}")
+            if carta1 > carta2:
+                print(f"El jugador gana")
+                suma = carta1 + carta2
+                actual.acumulado1 += suma
+                turno + 1
+            if carta1 < carta2:
+                print(f"La maquina gana")
+                suma = carta1 + carta2
+                actual.acumulado2 += suma
+                turno + 1
+            if carta1 == carta2:
+                print(f"Es un empate")
+                turno + 0
+                
+    def mostrar_jugadores(self):
+        if self.head is None:
+            return []
+        jugadores = []
+        actual = self.head
+        while True:
+            jugadores.append((actual.nombre, actual.acumulado))
+            actual = actual.siguiente
+            if actual == self.head:
+                break
+        return jugadores
+
+jugadores = ListaCircular()
+jugadores.agregar_jugador("Jugador 1")
+jugadores.agregar_jugador("Jugador 2")
+jugadores.agregar_jugador("Jugador 3")
+jugadores.agregar_jugador("Jugador 4")
+jugadores.agregar_jugador("Jugador 5")
+
+jugadores.jugar()
+print("Acumulado de cada jugador:")
+for nombre, acumulado in jugadores.mostrar_jugadores():
+    print(f"{nombre}: {acumulado}")
+               
